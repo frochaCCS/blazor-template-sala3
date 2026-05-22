@@ -4,11 +4,11 @@
 
 ```
 ├── src/
-│   ├── CopilotBlazorTemplate.Web/     # Blazor Web App (UI + Identity)
-│   └── CopilotBlazorTemplate.Core/    # Domain entities, DbContext, data layer
+│   ├── ITSupportDesk.Web/     # Blazor Web App (UI + Identity)
+│   └── ITSupportDesk.Core/    # Domain entities, DbContext, data layer
 ├── tests/
-│   ├── CopilotBlazorTemplate.UnitTests/   # xUnit unit tests
-│   └── CopilotBlazorTemplate.E2ETests/    # Playwright E2E tests
+│   ├── ITSupportDesk.UnitTests/   # xUnit unit tests
+│   └── ITSupportDesk.E2ETests/    # Playwright E2E tests
 ├── docs/                               # Screenshots, demo
 ├── scripts/                            # Dev setup scripts
 └── .github/                            # Workflows, instructions, agents
@@ -18,24 +18,24 @@
 
 Inspect `.github/skills/<name>/SKILL.md` and invoke when the trigger fires:
 
-- **bootstrap-new-app** — FIRST action when `grep -rIlq CopilotBlazorTemplate . --exclude-dir={.git,bin,obj,node_modules}` finds matches AND the user is asking for a new app/feature/domain. Renames the template via `scripts/init-app.sh` before any other work.
+- **bootstrap-new-app** — FIRST action when `grep -rIlq ITSupportDesk . --exclude-dir={.git,bin,obj,node_modules}` finds matches AND the user is asking for a new app/feature/domain. Renames the template via `scripts/init-app.sh` before any other work.
 - **task-orchestration** — Move existing tasks through `tasks/backlog/ → current/ → done/`. Main agent does NOT create persisted tasks; sub-step decomposition uses the built-in todo tool.
 - **validator** — Run after each phase, before moving a task to `done/`.
 - **screenshots-demo** — When UI pages were added or changed.
-- **playwright-e2e** — When authoring or maintaining E2E tests under `tests/CopilotBlazorTemplate.E2ETests/`.
+- **playwright-e2e** — When authoring or maintaining E2E tests under `tests/ITSupportDesk.E2ETests/`.
 
 ## Commands
 
 | Action | Command |
 |--------|---------|
 | Build | `dotnet build` |
-| Test (unit) | `dotnet test tests/CopilotBlazorTemplate.UnitTests/` |
-| Test (E2E) | `dotnet test tests/CopilotBlazorTemplate.E2ETests/` |
+| Test (unit) | `dotnet test tests/ITSupportDesk.UnitTests/` |
+| Test (E2E) | `dotnet test tests/ITSupportDesk.E2ETests/` |
 | Test (all) | `dotnet test` |
-| Run | `dotnet run --project src/CopilotBlazorTemplate.Web` |
+| Run | `dotnet run --project src/ITSupportDesk.Web` |
 | Format | `dotnet format` |
-| EF Migration | `dotnet ef migrations add <Name> --project src/CopilotBlazorTemplate.Core --startup-project src/CopilotBlazorTemplate.Web` |
-| EF Update DB | `dotnet ef database update --project src/CopilotBlazorTemplate.Core --startup-project src/CopilotBlazorTemplate.Web` |
+| EF Migration | `dotnet ef migrations add <Name> --project src/ITSupportDesk.Core --startup-project src/ITSupportDesk.Web` |
+| EF Update DB | `dotnet ef database update --project src/ITSupportDesk.Core --startup-project src/ITSupportDesk.Web` |
 
 ## Seeded Credentials
 
@@ -56,8 +56,8 @@ Inspect `.github/skills/<name>/SKILL.md` and invoke when the trigger fires:
 
 ## How to Extend
 
-1. **Add entities**: Create in `src/CopilotBlazorTemplate.Core/Entities/`, add DbSet to `AppDbContext`
-2. **Add pages**: Create `.razor` files in `src/CopilotBlazorTemplate.Web/Components/Pages/`
+1. **Add entities**: Create in `src/ITSupportDesk.Core/Entities/`, add DbSet to `AppDbContext`
+2. **Add pages**: Create `.razor` files in `src/ITSupportDesk.Web/Components/Pages/`
 3. **Add services**: Register in `Program.cs`, implement in Core project
 4. **Add migrations**: Run EF migration command above after model changes
 
@@ -77,4 +77,4 @@ Pick the tool by **what you're doing**, not by what's available:
 
 - **Screenshot / demo-video capture (batch):** `bash scripts/demo.sh`. **Do not** use Playwright MCP for this. The Copilot cloud agent's managed Playwright MCP holds a singleton chromium profile and, once touched, returns `Browser is already in use for /root/.cache/ms-playwright/mcp-chrome, use --isolated`. The suggested `--isolated` flag is **not** user-passable in the managed MCP, and the failure is **not** recoverable from inside the agent — clearing `SingletonLock`, `pkill`-ing chromium, or wiping the profile dir all do nothing (the MCP server tracks state in-process and `pkill` is sandbox-blocked anyway). `scripts/demo.sh` uses an independent npm-Playwright install under `/tmp/pw-runner` (pre-installed by `.github/workflows/copilot-setup-steps.yml`) and is unaffected. See `.github/skills/screenshots-demo/SKILL.md`.
 - **Ad-hoc single-page inspection** (pre-flight verification of one page, debugging a render issue): Playwright MCP is fine, one page at a time. It is auto-configured for the Copilot cloud agent and scoped to `localhost`/`127.0.0.1`. Do not install or invoke the standalone Playwright JS CLI.
-- **E2E tests:** `Microsoft.Playwright` (NuGet) inside `tests/CopilotBlazorTemplate.E2ETests/`. Browsers install via `pwsh bin/Release/net10.0/playwright.ps1 install --with-deps chromium` after `dotnet build`.
+- **E2E tests:** `Microsoft.Playwright` (NuGet) inside `tests/ITSupportDesk.E2ETests/`. Browsers install via `pwsh bin/Release/net10.0/playwright.ps1 install --with-deps chromium` after `dotnet build`.
