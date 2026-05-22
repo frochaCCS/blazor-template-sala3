@@ -1,0 +1,113 @@
+@page "/tickets"
+@attribute [Authorize]
+@layout AuthenticatedLayout
+
+@using Microsoft.AspNetCore.Identity
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject ITicketService TicketService
+
+<PageTitle>My Tickets</PageTitle>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1>My Tickets</h1>
+    <a href="/tickets/create" class="btn-primary">+ New Ticket</a>
+</div>
+
+<div class="card" style="margin-bottom: 1rem;">
+    <div class="form-group" style="margin-bottom: 0;">
+        <label for="statusFilter">Filter by Status</label>
+        <select id="statusFilter" class="form-select" @bind="selectedStatus" @bind:after="ApplyFilter">
+            <option value="">All</option>
+            <option value="Open">Open</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+        </select>
+    </div>
+</div>
+
+<div class="card">
+    @if (filteredTickets.Any())
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    @if (isAdmin)
+                    {
+                        <th>Created By</th>
+                    }
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in filteredTickets)
+                {
+                    <tr>
+                        <td><a href="/tickets/@ticket.Id">#@ticket.Id</a></td>
+                        <td><a href="/tickets/@ticket.Id">@ticket.Title</a></td>
+                        <td>@ticket.Category</td>
+                        <td><span class="badge badge-priority-@ticket.Priority.ToString().ToLower()">@ticket.Priority</span></td>
+                        <td><span class="badge badge-status-@ticket.Status.ToString().ToLower()">@FormatStatus(ticket.Status)</span></td>
+                        @if (isAdmin)
+                        {
+                            <td>@(ticket.CreatedBy?.DisplayName ?? "Unknown")</td>
+                        }
+                        <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p style="color: var(--muted-foreground);">No tickets found. Create your first support ticket!</p>
+    }
+</div>
+
+@code {
+    private List<SupportTicket> allTickets = new();
+    private List<SupportTicket> filteredTickets = new();
+    private bool isAdmin;
+    private string selectedStatus = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+        if (user is not null)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+            isAdmin = roles.Contains("Admin");
+
+            allTickets = isAdmin
+                ? await TicketService.GetAllTicketsAsync()
+                : await TicketService.GetTicketsForUserAsync(user.Id);
+            filteredTickets = allTickets;
+        }
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrEmpty(selectedStatus))
+        {
+            filteredTickets = allTickets;
+        }
+        else if (Enum.TryParse<TicketStatus>(selectedStatus, out var status))
+        {
+            filteredTickets = allTickets.Where(t => t.Status == status).ToList();
+        }
+    }
+
+    private static string FormatStatus(TicketStatus status) => status switch
+    {
+        TicketStatus.InProgress => "In Progress",
+        _ => status.ToString()
+    };
+}

@@ -1,0 +1,116 @@
+@page "/tickets/create"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout AuthenticatedLayout
+
+@using Microsoft.AspNetCore.Identity
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject ITicketService TicketService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Ticket</PageTitle>
+
+<h1>Create Support Ticket</h1>
+
+<div class="card" style="max-width: 600px;">
+    <EditForm Model="model" OnValidSubmit="HandleSubmit" FormName="CreateTicket">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <InputText id="title" @bind-Value="model.Title" class="form-input" placeholder="Brief description of the issue" />
+            <ValidationMessage For="() => model.Title" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputTextArea id="description" @bind-Value="model.Description" class="form-input form-textarea" placeholder="Provide details about the issue..." rows="5" />
+            <ValidationMessage For="() => model.Description" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <InputSelect id="category" @bind-Value="model.Category" class="form-select">
+                @foreach (var cat in Enum.GetValues<TicketCategory>())
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <InputSelect id="priority" @bind-Value="model.Priority" class="form-select">
+                @foreach (var pri in Enum.GetValues<TicketPriority>())
+                {
+                    <option value="@pri">@pri</option>
+                }
+            </InputSelect>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert-error">@errorMessage</div>
+        }
+
+        <button type="submit" class="btn-primary" disabled="@isSubmitting">
+            @(isSubmitting ? "Creating..." : "Create Ticket")
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private TicketFormModel model = new();
+    private bool isSubmitting;
+    private string? errorMessage;
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = await UserManager.GetUserAsync(authState.User);
+            if (user is null)
+            {
+                errorMessage = "You must be logged in to create a ticket.";
+                return;
+            }
+
+            var ticket = await TicketService.CreateTicketAsync(
+                model.Title,
+                model.Description,
+                model.Category,
+                model.Priority,
+                user.Id);
+
+            NavigationManager.NavigateTo($"/tickets/{ticket.Id}");
+        }
+        catch (Exception)
+        {
+            errorMessage = "An error occurred while creating the ticket.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private sealed class TicketFormModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Title is required")]
+        [System.ComponentModel.DataAnnotations.StringLength(200, MinimumLength = 3, ErrorMessage = "Title must be 3–200 characters")]
+        public string Title { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Description is required")]
+        [System.ComponentModel.DataAnnotations.StringLength(4000, MinimumLength = 10, ErrorMessage = "Description must be 10–4000 characters")]
+        public string Description { get; set; } = "";
+
+        public TicketCategory Category { get; set; } = TicketCategory.Other;
+        public TicketPriority Priority { get; set; } = TicketPriority.Medium;
+    }
+}

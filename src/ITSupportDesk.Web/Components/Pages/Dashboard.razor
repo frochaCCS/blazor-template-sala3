@@ -6,6 +6,7 @@
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<ApplicationUser> UserManager
+@inject ITicketService TicketService
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -18,14 +19,68 @@
         <p>Your role: <span class="badge">@role</span></p>
     </div>
 
-    <div class="card">
-        <p>This is where your app content goes. Customize this page for your project.</p>
+    <div class="stats-grid">
+        <div class="stat-card stat-open">
+            <div class="stat-number">@openCount</div>
+            <div class="stat-label">Open</div>
+        </div>
+        <div class="stat-card stat-in-progress">
+            <div class="stat-number">@inProgressCount</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card stat-resolved">
+            <div class="stat-number">@resolvedCount</div>
+            <div class="stat-label">Resolved</div>
+        </div>
+        <div class="stat-card stat-closed">
+            <div class="stat-number">@closedCount</div>
+            <div class="stat-label">Closed</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3>Recent Tickets</h3>
+            <a href="/tickets/create" class="btn-primary">+ New Ticket</a>
+        </div>
+        @if (recentTickets.Any())
+        {
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in recentTickets)
+                    {
+                        <tr>
+                            <td><a href="/tickets/@ticket.Id">#@ticket.Id</a></td>
+                            <td><a href="/tickets/@ticket.Id">@ticket.Title</a></td>
+                            <td><span class="badge badge-priority-@ticket.Priority.ToString().ToLower()">@ticket.Priority</span></td>
+                            <td><span class="badge badge-status-@ticket.Status.ToString().ToLower()">@FormatStatus(ticket.Status)</span></td>
+                            <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: var(--muted-foreground);">No tickets yet. Create your first support ticket!</p>
+        }
     </div>
 }
 
 @code {
     private string? displayName;
     private string? role;
+    private List<SupportTicket> recentTickets = new();
+    private int openCount, inProgressCount, resolvedCount, closedCount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,6 +91,23 @@
             displayName = user.DisplayName;
             var roles = await UserManager.GetRolesAsync(user);
             role = roles.FirstOrDefault() ?? "User";
+
+            var isAdmin = roles.Contains("Admin");
+            var tickets = isAdmin
+                ? await TicketService.GetAllTicketsAsync()
+                : await TicketService.GetTicketsForUserAsync(user.Id);
+
+            openCount = tickets.Count(t => t.Status == TicketStatus.Open);
+            inProgressCount = tickets.Count(t => t.Status == TicketStatus.InProgress);
+            resolvedCount = tickets.Count(t => t.Status == TicketStatus.Resolved);
+            closedCount = tickets.Count(t => t.Status == TicketStatus.Closed);
+            recentTickets = tickets.Take(5).ToList();
         }
     }
+
+    private static string FormatStatus(TicketStatus status) => status switch
+    {
+        TicketStatus.InProgress => "In Progress",
+        _ => status.ToString()
+    };
 }

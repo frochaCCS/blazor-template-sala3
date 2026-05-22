@@ -222,3 +222,216 @@ h1:focus {
   outline: 2px solid var(--ring);
   outline-offset: 1px;
 }
+
+/* Form inputs */
+.form-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+.form-input:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.form-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+.form-select:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* Secondary button */
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-secondary:hover {
+  background-color: var(--muted);
+}
+
+/* Alert error */
+.alert-error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.stat-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.stat-card.stat-open {
+  background-color: var(--status-open);
+  color: var(--status-open-fg);
+}
+.stat-card.stat-in-progress {
+  background-color: var(--status-inprogress);
+  color: var(--status-inprogress-fg);
+}
+.stat-card.stat-resolved {
+  background-color: var(--status-resolved);
+  color: var(--status-resolved-fg);
+}
+.stat-card.stat-closed {
+  background-color: var(--status-closed);
+  color: var(--status-closed-fg);
+}
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Status badges */
+.badge-status-open {
+  background-color: var(--status-open);
+  color: var(--status-open-fg);
+}
+.badge-status-inprogress {
+  background-color: var(--status-inprogress);
+  color: var(--status-inprogress-fg);
+}
+.badge-status-resolved {
+  background-color: var(--status-resolved);
+  color: var(--status-resolved-fg);
+}
+.badge-status-closed {
+  background-color: var(--status-closed);
+  color: var(--status-closed-fg);
+}
+
+/* Priority badges */
+.badge-priority-low {
+  background-color: var(--priority-low);
+  color: var(--priority-low-fg);
+}
+.badge-priority-medium {
+  background-color: var(--priority-medium);
+  color: var(--priority-medium-fg);
+}
+.badge-priority-high {
+  background-color: var(--priority-high);
+  color: var(--priority-high-fg);
+}
+.badge-priority-critical {
+  background-color: var(--priority-critical);
+  color: var(--priority-critical-fg);
+}
+
+/* Hero icon */
+.hero-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+/* Ticket detail */
+.ticket-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  flex-wrap: wrap;
+}
+.ticket-description {
+  margin: 1rem 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.ticket-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Comments */
+.comments-list {
+  margin-bottom: 1.5rem;
+}
+.comment {
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0;
+}
+.comment:last-child {
+  border-bottom: none;
+}
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.comment-content {
+  margin: 0;
+  line-height: 1.5;
+}
+.comment-form {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Table links */
+.data-table a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.data-table a:hover {
+  text-decoration: underline;
+}
+
+/* Text danger for validation */
+.text-danger {
+  color: var(--destructive);
+  font-size: 0.8rem;
+}

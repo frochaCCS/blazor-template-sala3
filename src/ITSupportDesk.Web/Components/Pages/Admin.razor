@@ -6,16 +6,33 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject UserManager<ApplicationUser> UserManager
+@inject ITicketService TicketService
 
 <PageTitle>Admin</PageTitle>
 
 <h1>Admin Panel</h1>
 
-<div class="alert-info">
-    This page is only visible to Admin users.
+<div class="stats-grid" style="margin-bottom: 1.5rem;">
+    <div class="stat-card">
+        <div class="stat-number">@totalTickets</div>
+        <div class="stat-label">Total Tickets</div>
+    </div>
+    <div class="stat-card stat-open">
+        <div class="stat-number">@unassignedCount</div>
+        <div class="stat-label">Unassigned</div>
+    </div>
+    <div class="stat-card" style="background-color: var(--destructive); color: var(--destructive-foreground);">
+        <div class="stat-number">@criticalCount</div>
+        <div class="stat-label">Critical</div>
+    </div>
+    <div class="stat-card" style="background-color: var(--primary); color: var(--primary-foreground);">
+        <div class="stat-number">@highCount</div>
+        <div class="stat-label">High Priority</div>
+    </div>
 </div>
 
-<div class="card">
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h2>User Management</h2>
     <table class="data-table">
         <thead>
             <tr>
@@ -44,6 +61,7 @@
 
 @code {
     private List<UserInfo> users = new();
+    private int totalTickets, unassignedCount, criticalCount, highCount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +76,12 @@
                 Roles = roles.ToList()
             });
         }
+
+        var tickets = await TicketService.GetAllTicketsAsync();
+        totalTickets = tickets.Count;
+        unassignedCount = tickets.Count(t => t.AssignedToId is null);
+        criticalCount = tickets.Count(t => t.Priority == TicketPriority.Critical);
+        highCount = tickets.Count(t => t.Priority == TicketPriority.High);
     }
 
     private sealed class UserInfo

@@ -5,6 +5,7 @@ using ITSupportDesk.Web.Components;
 using ITSupportDesk.Web.Components.Account;
 using ITSupportDesk.Core.Data;
 using ITSupportDesk.Core.Entities;
+using ITSupportDesk.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 var app = builder.Build();
 
