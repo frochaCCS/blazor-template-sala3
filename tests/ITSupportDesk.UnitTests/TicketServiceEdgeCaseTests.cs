@@ -12,9 +12,9 @@ public class TicketServiceEdgeCaseTests
     private (ServiceProvider sp, AppDbContext db, TicketService service, string userId, string adminId) CreateTestContext()
     {
         var services = new ServiceCollection();
-        var dbName = Guid.NewGuid().ToString();
+        var dbPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
         services.AddDbContext<AppDbContext>(options =>
-            options.UseInMemoryDatabase(dbName));
+            options.UseSqlite($"Data Source={dbPath}"));
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();

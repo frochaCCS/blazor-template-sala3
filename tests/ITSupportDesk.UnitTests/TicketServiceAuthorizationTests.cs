@@ -55,9 +55,9 @@ public class TicketServiceAuthorizationTests
     private (ServiceProvider sp, AppDbContext db, TicketService service, MockAuthorizationContextService authContext, string userId, string adminId) CreateTestContext(string? currentUserId = null, params string[] roles)
     {
         var services = new ServiceCollection();
-        var dbName = Guid.NewGuid().ToString();
+        var dbPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
         services.AddDbContext<AppDbContext>(options =>
-            options.UseInMemoryDatabase(dbName));
+            options.UseSqlite($"Data Source={dbPath}"));
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
