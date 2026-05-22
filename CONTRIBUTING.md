@@ -92,6 +92,33 @@ When adding a new NuGet package:
 
 4. Commit both the `.csproj` and `packages.lock.json` changes.
 
+## Pull Request Merging Strategy
+
+We use **squash-merge** strategy for PR merges to keep the main branch history clean and linear. When your PR is approved:
+
+1. **GitHub will automatically squash all commits** into a single commit on `main`.
+2. The squashed commit message will use the PR title by default.
+3. Ensure your **PR title follows Conventional Commit format** so the squashed commit is well-documented:
+   ```
+   feat: add ticket assignment functionality
+   fix: resolve login timeout issue
+   docs: update deployment guide
+   ```
+
+### Why squash-merge?
+
+- **Clean history**: `main` branch shows one commit per completed feature/fix
+- **Atomic changes**: Each PR becomes a single logical unit with a clear message
+- **Easier bisecting**: Finding which commit introduced a bug is straightforward
+- **Better changelog generation**: Each squashed commit directly corresponds to a changelog entry
+
+### Commit message best practices
+
+Within a PR, you can have multiple commits with any message format during development. Only ensure:
+- Your **PR title is in Conventional Commit format** (this becomes the squashed commit message)
+- Individual commits in the PR can be rough/work-in-progress; they get squashed anyway
+- Before merging, reviewers will verify the PR title is clear and accurate
+
 ## Pull Request Checklist
 
 When submitting a PR, please ensure:
@@ -99,7 +126,7 @@ When submitting a PR, please ensure:
 - [ ] Code builds cleanly (`dotnet build`)
 - [ ] All tests pass (`dotnet test`)
 - [ ] Code is formatted (`dotnet format`)
-- [ ] Commit messages follow Conventional Commits
+- [ ] **PR title follows Conventional Commits format** (will be used as the squashed commit message)
 - [ ] Documentation is updated (if applicable)
 - [ ] Screenshots/videos are attached (if UI changes)
 - [ ] No breaking changes without discussion
