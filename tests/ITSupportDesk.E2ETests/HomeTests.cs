@@ -15,7 +15,7 @@ public class HomeTests : IClassFixture<PlaywrightFixture>
         var page = await context.NewPageAsync();
         await page.GotoAsync(_fixture.BaseUrl);
 
-        await Assertions.Expect(page.Locator("h1")).ToContainTextAsync("Copilot Blazor Template");
+        await Assertions.Expect(page.Locator("h1")).ToContainTextAsync("IT Support Desk");
         await Assertions.Expect(page.GetByRole(AriaRole.Link, new() { Name = "Login" })).ToBeVisibleAsync();
     }
 
@@ -26,7 +26,7 @@ public class HomeTests : IClassFixture<PlaywrightFixture>
         var page = await context.NewPageAsync();
         await page.GotoAsync(_fixture.BaseUrl);
 
-        await Assertions.Expect(page).ToHaveTitleAsync(new System.Text.RegularExpressions.Regex("Copilot Blazor Template"));
+        await Assertions.Expect(page).ToHaveTitleAsync(new System.Text.RegularExpressions.Regex("IT Support Desk"));
     }
 
     [Fact]
