@@ -226,6 +226,8 @@ else
         _ => status.ToString()
     };
 
+    private static string GetCssSafeEnumName(string enumName) =>
+        System.Text.RegularExpressions.Regex.Replace(enumName, "([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
 
     private sealed class CommentInputModel
     {
