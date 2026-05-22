@@ -65,3 +65,47 @@
 - EF Core + SQLite stack
 - .NET 10 TFM
 - Template's CSS variable system (extended, not replaced)
+
+---
+
+## Changelog
+
+All notable changes to this project are documented below.
+
+### [Unreleased]
+
+#### Added
+- `qa-tester` custom agent for functional testing
+- 40 new unit tests for improved coverage (TicketServiceTests, TicketCommentTests, etc.)
+- Initial `nuget.config` for package source configuration
+
+#### Features
+- **IT Support Desk Application** — complete ticket management system with:
+  - SupportTicket and TicketComment entities with full CRUD operations
+  - Role-based access control for ticket visibility and management
+  - Dashboard with ticket statistics and recent activity
+  - Ticket list, create, and detail pages with admin controls
+  - Comment thread functionality on tickets
+  - Status and priority badge indicators
+  - Admin panel with ticket summary statistics
+
+#### Changed
+- Rebranded from `CopilotBlazorTemplate` to `ITSupportDesk`
+- Updated theming: primary color changed from dark grey (#171717) to IT-blue (#2563eb)
+- Enhanced layout with new sidebar navigation for ticket management
+- Added comprehensive test coverage: 15 new unit tests + 11 new E2E tests
+
+#### Technical Details
+- Added EF Core migration: `AddSupportTickets` for new tables
+- Seeded 5 sample tickets + 1 comment for demo purposes
+- All 52 tests passing (5 existing unit tests + 15 new unit tests + 21 existing E2E tests + 11 new E2E tests)
+- Updated demo configuration with new user credentials and storyboard
+
+### [v1.0.0] - 2026-05-22
+
+#### Initial Release
+- Base Copilot Blazor Template with .NET 10
+- ASP.NET Identity integration with cookie-based authentication
+- SQLite database with Entity Framework Core
+- Basic demo pages (Home, Counter, Weather)
+- Automated database migration at application startup
