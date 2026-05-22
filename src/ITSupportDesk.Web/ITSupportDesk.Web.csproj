@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-ITSupportDesk_Web-962658d4-5019-4545-bd46-e76e0b54d305</UserSecretsId>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <!-- Suppress analyzer warnings in template-generated Identity files -->
+    <NoWarn>$(NoWarn);CA1859;CA1873;CA1848</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
