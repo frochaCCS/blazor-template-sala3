@@ -238,9 +238,9 @@ public class FormValidationTests
 
         var results = ValidateModel(model);
 
-        // Whitespace-only title still passes length validation (3 chars minimum)
-        // This is expected behavior - database/service layer should handle trimming if needed
-        Assert.Empty(results);
+        // Whitespace-only title is treated as empty by Required validator
+        Assert.Single(results);
+        Assert.Contains("Title is required", results[0].ErrorMessage);
     }
 
     [Fact]
@@ -254,9 +254,9 @@ public class FormValidationTests
 
         var results = ValidateModel(model);
 
-        // Whitespace-only description still passes length validation (10 chars minimum)
-        // This is expected behavior - database/service layer should handle trimming if needed
-        Assert.Empty(results);
+        // Whitespace-only description is treated as empty by Required validator
+        Assert.Single(results);
+        Assert.Contains("Description is required", results[0].ErrorMessage);
     }
 
     [Fact]

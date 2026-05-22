@@ -105,13 +105,21 @@ else
         }
 
         <div class="comment-form">
-            <div class="form-group">
-                <label for="newComment">Add a Comment</label>
-                <textarea id="newComment" class="form-input form-textarea" @bind="newComment" rows="3" placeholder="Type your comment..."></textarea>
-            </div>
-            <button class="btn-primary" @onclick="AddComment" disabled="@isSubmitting">
-                @(isSubmitting ? "Posting..." : "Post Comment")
-            </button>
+            <EditForm Model="commentModel" OnValidSubmit="AddComment" class="comment-edit-form">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label for="commentContent">Add a Comment</label>
+                    <InputTextArea id="commentContent" class="form-input form-textarea" @bind-Value="commentModel.Content" rows="3" placeholder="Type your comment..."></InputTextArea>
+                    <ValidationMessage For="() => commentModel.Content" class="validation-error" />
+                </div>
+                @if (!string.IsNullOrEmpty(commentError))
+                {
+                    <div class="validation-error">@commentError</div>
+                }
+                <button type="submit" class="btn-primary" disabled="@isSubmitting">
+                    @(isSubmitting ? "Posting..." : "Post Comment")
+                </button>
+            </EditForm>
         </div>
     </div>
 }
@@ -124,7 +132,6 @@ else
     private List<ApplicationUser> adminUsers = new();
     private bool isAdmin;
     private bool accessDenied;
-    private string newComment = "";
     private string? commentError;
     private bool isSubmitting;
     private TicketStatus selectedStatus;
@@ -187,9 +194,9 @@ else
     private async Task AddComment()
     {
         commentError = null;
-        if (string.IsNullOrWhiteSpace(commentModel.Content) || ticket is null) 
+        if (ticket is null) 
         {
-            commentError = "Comment cannot be empty.";
+            commentError = "Ticket not found.";
             return;
         }
         
