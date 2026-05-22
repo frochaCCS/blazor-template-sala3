@@ -1,20 +1,33 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ITSupportDesk.Core.Data;
 using ITSupportDesk.Core.Entities;
 using ITSupportDesk.Core.Services;
 
 namespace ITSupportDesk.UnitTests;
 
-public class TicketServiceTests
+public class TicketServiceTests : IAsyncLifetime
 {
+    private string? _dbPath;
+    private ServiceProvider? _sp;
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync()
+    {
+        if (_sp != null) await _sp.DisposeAsync();
+        if (_dbPath != null && File.Exists(_dbPath))
+            File.Delete(_dbPath);
+    }
+
     private (ServiceProvider sp, AppDbContext db, TicketService service, string userId, string adminId) CreateTestContext()
     {
+        _dbPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
         var services = new ServiceCollection();
-        var dbName = Guid.NewGuid().ToString();
         services.AddDbContext<AppDbContext>(options =>
-            options.UseInMemoryDatabase(dbName));
+            options.UseSqlite($"Data Source={_dbPath}"));
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
@@ -31,7 +44,8 @@ public class TicketServiceTests
         db.Users.Add(admin);
         db.SaveChanges();
 
-        var service = new TicketService(db);
+        var logger = sp.GetRequiredService<ILogger<TicketService>>();
+        var service = new TicketService(db, logger);
         return (sp, db, service, user.Id, admin.Id);
     }
 

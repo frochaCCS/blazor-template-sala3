@@ -17,13 +17,16 @@
           "Microsoft.EntityFrameworkCore.Relational": "10.0.8"
         }
       },
-      "Microsoft.EntityFrameworkCore.InMemory": {
+      "Microsoft.EntityFrameworkCore.Sqlite": {
         "type": "Direct",
         "requested": "[10.0.8, )",
         "resolved": "10.0.8",
-        "contentHash": "C3T9khx1oiLPrS6ehoSnZptiEuTOIaX60it9SGvCkWTeF5i6+IceK6p7mtx+mkFwWB5qx+v3IhgG51iUEtLq9w==",
+        "contentHash": "8BGSSKBDDBC8s6ye1Y2Ar1BToeZHLHOzUn0nAOng4Z+8dJ4KQKC/1qYFPgRYchDCOMQh98REHco8SrrMYsHuMQ==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.8"
+          "Microsoft.EntityFrameworkCore.Sqlite.Core": "10.0.8",
+          "Microsoft.Extensions.DependencyModel": "10.0.8",
+          "SQLitePCLRaw.bundle_e_sqlite3": "2.1.11",
+          "SQLitePCLRaw.core": "2.1.11"
         }
       },
       "Microsoft.NET.Test.Sdk": {
@@ -200,18 +203,6 @@
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "[10.0.8, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[10.0.8, )"
-        }
-      },
-      "Microsoft.EntityFrameworkCore.Sqlite": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.8, )",
-        "resolved": "10.0.8",
-        "contentHash": "8BGSSKBDDBC8s6ye1Y2Ar1BToeZHLHOzUn0nAOng4Z+8dJ4KQKC/1qYFPgRYchDCOMQh98REHco8SrrMYsHuMQ==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.Sqlite.Core": "10.0.8",
-          "Microsoft.Extensions.DependencyModel": "10.0.8",
-          "SQLitePCLRaw.bundle_e_sqlite3": "2.1.11",
-          "SQLitePCLRaw.core": "2.1.11"
         }
       }
     }

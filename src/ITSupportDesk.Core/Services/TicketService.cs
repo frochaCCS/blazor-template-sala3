@@ -85,11 +85,22 @@ public class TicketService : ITicketService
 
     public async Task<TicketComment> AddCommentAsync(int ticketId, string authorId, string content)
     {
+        // Validate content
+        if (string.IsNullOrWhiteSpace(content))
+            throw new ArgumentException("Comment cannot be empty", nameof(content));
+
+        var trimmedContent = content.Trim();
+        if (trimmedContent.Length < 1)
+            throw new ArgumentException("Comment must be at least 1 character", nameof(content));
+
+        if (trimmedContent.Length > 2000)
+            throw new ArgumentException("Comment must not exceed 2000 characters", nameof(content));
+
         var comment = new TicketComment
         {
             TicketId = ticketId,
             AuthorId = authorId,
-            Content = content,
+            Content = trimmedContent,
             CreatedAt = DateTime.UtcNow
         };
 

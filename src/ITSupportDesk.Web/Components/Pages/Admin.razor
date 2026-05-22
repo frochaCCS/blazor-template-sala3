@@ -12,7 +12,7 @@
 
 <h1>Admin Panel</h1>
 
-<div class="stats-grid" style="margin-bottom: 1.5rem;">
+<div class="stats-grid mb-xl">
     <div class="stat-card">
         <div class="stat-number">@totalTickets</div>
         <div class="stat-label">Total Tickets</div>
@@ -21,17 +21,17 @@
         <div class="stat-number">@unassignedCount</div>
         <div class="stat-label">Unassigned</div>
     </div>
-    <div class="stat-card" style="background-color: var(--destructive); color: var(--destructive-foreground);">
+    <div class="stat-card stat-destructive">
         <div class="stat-number">@criticalCount</div>
         <div class="stat-label">Critical</div>
     </div>
-    <div class="stat-card" style="background-color: var(--primary); color: var(--primary-foreground);">
+    <div class="stat-card stat-primary">
         <div class="stat-number">@highCount</div>
         <div class="stat-label">High Priority</div>
     </div>
 </div>
 
-<div class="card" style="margin-bottom: 1.5rem;">
+<div class="card mb-xl">
     <h2>User Management</h2>
     <table class="data-table">
         <thead>

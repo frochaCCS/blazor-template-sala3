@@ -505,3 +505,73 @@ h1:focus {
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
+
+/* Utility classes for spacing and layout */
+.mb-0 {
+  margin-bottom: 0;
+}
+.mt-xs {
+  margin-top: 0.5rem;
+}
+.mb-lg {
+  margin-bottom: 1rem;
+}
+.mb-xl {
+  margin-bottom: 1.5rem;
+}
+.mt-xl {
+  margin-top: 1.5rem;
+}
+
+/* Display utilities */
+.d-inline-block {
+  display: inline-block;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+/* Page header layout */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Narrow card for forms */
+.card-narrow {
+  max-width: 600px;
+}
+
+/* Flex row for form controls */
+.flex-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Flexible form column */
+.flex-col {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Full-width button variant */
+.btn-primary.btn-full {
+  width: 100%;
+  padding: 0.75rem;
+}
+
+/* Stat card colors */
+.stat-card.stat-destructive {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+.stat-card.stat-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

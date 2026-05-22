@@ -6,24 +6,37 @@ using ITSupportDesk.Core.Entities;
 
 namespace ITSupportDesk.UnitTests;
 
-public class AppDbContextTests
+public class AppDbContextTests : IAsyncLifetime
 {
+    private string? _dbPath;
+    private ServiceProvider? _sp;
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync()
+    {
+        if (_sp != null) await _sp.DisposeAsync();
+        if (_dbPath != null && File.Exists(_dbPath))
+            File.Delete(_dbPath);
+    }
+
     private (ServiceProvider sp, AppDbContext db) CreateTestContext()
     {
+        _dbPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
         var services = new ServiceCollection();
-        var dbName = Guid.NewGuid().ToString();
+        
         services.AddDbContext<AppDbContext>(options =>
-            options.UseInMemoryDatabase(dbName));
+            options.UseSqlite($"Data Source={_dbPath}"));
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
         services.AddLogging();
 
-        var sp = services.BuildServiceProvider();
-        var db = sp.GetRequiredService<AppDbContext>();
+        _sp = services.BuildServiceProvider();
+        var db = _sp.GetRequiredService<AppDbContext>();
         db.Database.EnsureCreated();
 
-        return (sp, db);
+        return (_sp, db);
     }
 
     private ApplicationUser SeedUser(AppDbContext db, string id, string displayName)
