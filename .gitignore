@@ -23,4 +23,5 @@ package-lock.json
 Thumbs.db
 
 ## NuGet
-packages.lock.json
+# packages.lock.json files are now tracked for reproducible builds
+

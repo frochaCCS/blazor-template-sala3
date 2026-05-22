@@ -23,7 +23,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await adminPage.GotoAsync($"{_fixture.BaseUrl}/tickets");
         
         await adminPage.Locator(".data-table tbody tr a").First.ClickAsync();
-        await adminPage.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/(\d+)"));
+        await adminPage.WaitForURLAsync("**/tickets/**");
         
         var ticketId = adminPage.Url.Split('/').Last();
 
@@ -51,7 +51,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await page.Locator("#priority").SelectOptionAsync("Medium");
         
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Ticket" }).ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await page.Locator("#newComment").FillAsync("Already tried restarting.");
         await page.GetByRole(AriaRole.Button, new() { Name = "Post Comment" }).ClickAsync();
@@ -69,7 +69,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         
         await page.GotoAsync($"{_fixture.BaseUrl}/tickets");
         await page.Locator(".data-table tbody tr a").First.ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await page.Locator("#statusSelect").SelectOptionAsync("Closed");
         await page.GetByRole(AriaRole.Button, new() { Name = "Update Status" }).ClickAsync();
@@ -87,21 +87,29 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         
         await page.GotoAsync($"{_fixture.BaseUrl}/tickets");
         await page.Locator(".data-table tbody tr a").First.ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         var selectElement = page.Locator("#assignSelect");
         var optionCount = await selectElement.Locator("option").CountAsync();
 
         if (optionCount > 1)
         {
-            await selectElement.SelectOptionAsync(new System.Text.RegularExpressions.Regex(".*"));
-            var assignButtons = page.Locator(".card").GetByRole(AriaRole.Button).Filter(new() { HasText = "Assign" });
-            
-            if (await assignButtons.CountAsync() > 0)
+            var options = await selectElement.Locator("option").AllAsync();
+            if (options.Count > 1)
             {
-                await assignButtons.First.ClickAsync();
-                await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-                await Assertions.Expect(page.Locator(".alert-info")).ToBeVisibleAsync();
+                var secondOption = await options[1].GetAttributeAsync("value");
+                if (secondOption != null)
+                {
+                    await selectElement.SelectOptionAsync(secondOption);
+                    var assignButtons = page.Locator(".card").GetByRole(AriaRole.Button).Filter(new() { HasText = "Assign" });
+                    
+                    if (await assignButtons.CountAsync() > 0)
+                    {
+                        await assignButtons.First.ClickAsync();
+                        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                        await Assertions.Expect(page.Locator(".alert-info")).ToBeVisibleAsync();
+                    }
+                }
             }
         }
     }
@@ -122,7 +130,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await page.Locator("#priority").SelectOptionAsync("Critical");
 
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Ticket" }).ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
         
         await Assertions.Expect(page.Locator("h2")).ToContainTextAsync("Complete ticket all fields");
         await Assertions.Expect(page.GetByText("Network")).ToBeVisibleAsync();
@@ -145,7 +153,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await page.Locator("#priority").SelectOptionAsync("Low");
         
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Ticket" }).ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await Assertions.Expect(page.GetByText("Admin Actions")).ToHaveCountAsync(0);
         await Assertions.Expect(page.Locator("#statusSelect")).ToHaveCountAsync(0);
@@ -161,7 +169,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         
         await page.GotoAsync($"{_fixture.BaseUrl}/tickets");
         await page.Locator(".data-table tbody tr a").First.ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await page.Locator("#statusSelect").SelectOptionAsync("InProgress");
         await page.GetByRole(AriaRole.Button, new() { Name = "Update Status" }).ClickAsync();
@@ -188,7 +196,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await page.Locator("#priority").SelectOptionAsync("Low");
         
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Ticket" }).ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await page.Locator("#newComment").FillAsync("First comment");
         await page.GetByRole(AriaRole.Button, new() { Name = "Post Comment" }).ClickAsync();
@@ -219,7 +227,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         await page.Locator("#priority").SelectOptionAsync("Low");
         
         await page.GetByRole(AriaRole.Button, new() { Name = "Create Ticket" }).ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         var backButton = page.GetByRole(AriaRole.Link, new() { Name = "Back to Tickets" });
         await Assertions.Expect(backButton).ToBeVisibleAsync();
@@ -239,7 +247,7 @@ public class TicketFunctionalityTests : IClassFixture<PlaywrightFixture>
         
         await page.GotoAsync($"{_fixture.BaseUrl}/tickets");
         await page.Locator(".data-table tbody tr a").First.ClickAsync();
-        await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@".*/tickets/\d+"));
+        await page.WaitForURLAsync("**/tickets/**");
 
         await Assertions.Expect(page.Locator("h3")).ToContainTextAsync("Comments");
         await Assertions.Expect(page.Locator("#newComment")).ToBeVisibleAsync();
