@@ -1,0 +1,45 @@
+name: "Copilot Setup Steps"
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+      # Note: Playwright MCP is auto-configured for the Copilot cloud agent
+      # (docs.github.com/en/copilot/concepts/agents/cloud-agent/mcp-and-cloud-agent)
+      # for ad-hoc browser interaction. The .NET E2E suite uses Microsoft.Playwright
+      # (NuGet) and needs browsers installed via playwright.ps1 (step below).
+      - name: Restore and Build
+        run: |
+          dotnet restore
+          dotnet build
+      - name: Install Playwright Browsers (.NET E2E)
+        run: pwsh tests/CopilotBlazorTemplate.E2ETests/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
+      - name: Pre-install Playwright (npm) for scripts/demo.sh
+        # Matches scripts/demo.sh ensure_playwright(): npm playwright into
+        # /tmp/pw-runner + chromium. Pre-installing here avoids ~45s install
+        # on the agent's first `bash scripts/demo.sh` and keeps screenshot
+        # capture working when the default Playwright MCP server's singleton
+        # chromium profile is locked (which the agent cannot pass --isolated to).
+        run: |
+          mkdir -p /tmp/pw-runner
+          npm install --silent --no-audit --no-fund --ignore-scripts \
+            --prefix /tmp/pw-runner playwright
+          /tmp/pw-runner/node_modules/.bin/playwright install chromium
+      - name: Verify versions
+        run: |
+          dotnet --version
+          node --version
+          npm --version
