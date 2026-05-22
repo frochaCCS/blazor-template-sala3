@@ -125,10 +125,12 @@ else
     private bool isAdmin;
     private bool accessDenied;
     private string newComment = "";
+    private string? commentError;
     private bool isSubmitting;
     private TicketStatus selectedStatus;
     private string selectedAssigneeId = "";
     private string? adminMessage;
+    private CommentInputModel commentModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -184,18 +186,38 @@ else
 
     private async Task AddComment()
     {
-        if (string.IsNullOrWhiteSpace(newComment) || ticket is null) return;
+        commentError = null;
+        if (string.IsNullOrWhiteSpace(commentModel.Content) || ticket is null) 
+        {
+            commentError = "Comment cannot be empty.";
+            return;
+        }
+        
         isSubmitting = true;
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = await UserManager.GetUserAsync(authState.User);
-        if (user is null) return;
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = await UserManager.GetUserAsync(authState.User);
+            if (user is null) 
+            {
+                commentError = "User not found.";
+                return;
+            }
 
-        var comment = await TicketService.AddCommentAsync(ticket.Id, user.Id, newComment.Trim());
-        comment.Author = user;
-        comments.Insert(0, comment);
-        newComment = "";
-        isSubmitting = false;
+            var comment = await TicketService.AddCommentAsync(ticket.Id, user.Id, commentModel.Content.Trim());
+            comment.Author = user;
+            comments.Insert(0, comment);
+            commentModel.Content = "";
+        }
+        catch (ArgumentException ex)
+        {
+            commentError = ex.Message;
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
     }
 
     private static string FormatStatus(TicketStatus status) => status switch
@@ -203,4 +225,12 @@ else
         TicketStatus.InProgress => "In Progress",
         _ => status.ToString()
     };
+
+
+    private sealed class CommentInputModel
+    {
+        [Required(ErrorMessage = "Comment is required")]
+        [StringLength(2000, MinimumLength = 1, ErrorMessage = "Comment must be between 1 and 2000 characters")]
+        public string Content { get; set; } = "";
+    }
 }
