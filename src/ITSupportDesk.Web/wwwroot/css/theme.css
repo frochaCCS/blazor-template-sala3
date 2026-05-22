@@ -1,0 +1,70 @@
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #eff6ff;
+  --accent-foreground: #1e40af;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
+  --radius: 0.5rem;
+
+  /* Status colors */
+  --status-open: #f59e0b;
+  --status-open-fg: #ffffff;
+  --status-inprogress: #3b82f6;
+  --status-inprogress-fg: #ffffff;
+  --status-resolved: #10b981;
+  --status-resolved-fg: #ffffff;
+  --status-closed: #6b7280;
+  --status-closed-fg: #ffffff;
+
+  /* Priority colors */
+  --priority-low: #6b7280;
+  --priority-low-fg: #ffffff;
+  --priority-medium: #f59e0b;
+  --priority-medium-fg: #ffffff;
+  --priority-high: #f97316;
+  --priority-high-fg: #ffffff;
+  --priority-critical: #ef4444;
+  --priority-critical-fg: #ffffff;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --accent: #1e3a5f;
+  --accent-foreground: #93c5fd;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+  --border: #334155;
+  --input: #334155;
+  --ring: #3b82f6;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+}

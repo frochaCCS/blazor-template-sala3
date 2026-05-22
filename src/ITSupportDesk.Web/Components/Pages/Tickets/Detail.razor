@@ -1,0 +1,205 @@
+@page "/tickets/{Id:int}"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@layout AuthenticatedLayout
+
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject ITicketService TicketService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(ticket?.Title ?? "Ticket Detail")</PageTitle>
+
+@if (accessDenied)
+{
+    <h1>Access Denied</h1>
+    <div class="alert-info">You do not have permission to view this ticket.</div>
+}
+else if (ticket is null)
+{
+    <h1>Ticket Not Found</h1>
+    <div class="alert-info">The requested ticket could not be found.</div>
+}
+else
+{
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h1>Ticket #@ticket.Id</h1>
+        <a href="/tickets" class="btn-secondary">← Back to Tickets</a>
+    </div>
+
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <h2>@ticket.Title</h2>
+        <div class="ticket-meta">
+            <span class="badge badge-status-@ticket.Status.ToString().ToLower()">@FormatStatus(ticket.Status)</span>
+            <span class="badge badge-priority-@ticket.Priority.ToString().ToLower()">@ticket.Priority</span>
+            <span class="badge">@ticket.Category</span>
+        </div>
+        <p class="ticket-description">@ticket.Description</p>
+        <div class="ticket-info">
+            <div><strong>Created by:</strong> @(ticket.CreatedBy?.DisplayName ?? "Unknown")</div>
+            <div><strong>Assigned to:</strong> @(ticket.AssignedTo?.DisplayName ?? "Unassigned")</div>
+            <div><strong>Created:</strong> @ticket.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+            <div><strong>Updated:</strong> @ticket.UpdatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+        </div>
+    </div>
+
+    @if (isAdmin)
+    {
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h3>Admin Actions</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="statusSelect">Change Status</label>
+                    <select id="statusSelect" class="form-select" @bind="selectedStatus">
+                        @foreach (var s in Enum.GetValues<TicketStatus>())
+                        {
+                            <option value="@s">@FormatStatus(s)</option>
+                        }
+                    </select>
+                    <button class="btn-primary" style="margin-top: 0.5rem;" @onclick="UpdateStatus">Update Status</button>
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="assignSelect">Assign To</label>
+                    <select id="assignSelect" class="form-select" @bind="selectedAssigneeId">
+                        <option value="">Unassigned</option>
+                        @foreach (var u in adminUsers)
+                        {
+                            <option value="@u.Id">@u.DisplayName</option>
+                        }
+                    </select>
+                    <button class="btn-primary" style="margin-top: 0.5rem;" @onclick="AssignTicket">Assign</button>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(adminMessage))
+            {
+                <div class="alert-info" style="margin-top: 0.5rem;">@adminMessage</div>
+            }
+        </div>
+    }
+
+    <div class="card">
+        <h3>Comments (@comments.Count)</h3>
+
+        @if (comments.Any())
+        {
+            <div class="comments-list">
+                @foreach (var comment in comments)
+                {
+                    <div class="comment">
+                        <div class="comment-header">
+                            <strong>@(comment.Author?.DisplayName ?? "Unknown")</strong>
+                            <span class="comment-date">@comment.CreatedAt.ToString("MMM dd, yyyy HH:mm")</span>
+                        </div>
+                        <p class="comment-content">@comment.Content</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p style="color: var(--muted-foreground); margin-bottom: 1rem;">No comments yet.</p>
+        }
+
+        <div class="comment-form">
+            <div class="form-group">
+                <label for="newComment">Add a Comment</label>
+                <textarea id="newComment" class="form-input form-textarea" @bind="newComment" rows="3" placeholder="Type your comment..."></textarea>
+            </div>
+            <button class="btn-primary" @onclick="AddComment" disabled="@isSubmitting">
+                @(isSubmitting ? "Posting..." : "Post Comment")
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private SupportTicket? ticket;
+    private List<TicketComment> comments = new();
+    private List<ApplicationUser> adminUsers = new();
+    private bool isAdmin;
+    private bool accessDenied;
+    private string newComment = "";
+    private bool isSubmitting;
+    private TicketStatus selectedStatus;
+    private string selectedAssigneeId = "";
+    private string? adminMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+        if (user is null) return;
+
+        var roles = await UserManager.GetRolesAsync(user);
+        isAdmin = roles.Contains("Admin");
+
+        ticket = await TicketService.GetTicketByIdAsync(Id);
+        if (ticket is null) return;
+
+        // Authorization: users can only view their own tickets
+        if (!isAdmin && ticket.CreatedById != user.Id)
+        {
+            accessDenied = true;
+            ticket = null;
+            return;
+        }
+
+        selectedStatus = ticket.Status;
+        selectedAssigneeId = ticket.AssignedToId ?? "";
+        comments = await TicketService.GetCommentsAsync(Id);
+
+        if (isAdmin)
+        {
+            adminUsers = await UserManager.Users.ToListAsync();
+        }
+    }
+
+    private async Task UpdateStatus()
+    {
+        if (ticket is null) return;
+        await TicketService.UpdateTicketStatusAsync(ticket.Id, selectedStatus);
+        ticket.Status = selectedStatus;
+        ticket.UpdatedAt = DateTime.UtcNow;
+        adminMessage = $"Status updated to {FormatStatus(selectedStatus)}.";
+    }
+
+    private async Task AssignTicket()
+    {
+        if (ticket is null) return;
+        var assigneeId = string.IsNullOrEmpty(selectedAssigneeId) ? null : selectedAssigneeId;
+        await TicketService.AssignTicketAsync(ticket.Id, assigneeId);
+        ticket.AssignedToId = assigneeId;
+        ticket.AssignedTo = assigneeId is not null ? await UserManager.FindByIdAsync(assigneeId) : null;
+        ticket.UpdatedAt = DateTime.UtcNow;
+        adminMessage = assigneeId is not null
+            ? $"Ticket assigned to {ticket.AssignedTo?.DisplayName}."
+            : "Ticket unassigned.";
+    }
+
+    private async Task AddComment()
+    {
+        if (string.IsNullOrWhiteSpace(newComment) || ticket is null) return;
+        isSubmitting = true;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+        if (user is null) return;
+
+        var comment = await TicketService.AddCommentAsync(ticket.Id, user.Id, newComment.Trim());
+        comment.Author = user;
+        comments.Insert(0, comment);
+        newComment = "";
+        isSubmitting = false;
+    }
+
+    private static string FormatStatus(TicketStatus status) => status switch
+    {
+        TicketStatus.InProgress => "In Progress",
+        _ => status.ToString()
+    };
+}

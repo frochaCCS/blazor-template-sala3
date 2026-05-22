@@ -119,7 +119,7 @@ This principle is intentionally generic. Specific ownership tables belong inside
 - Edit the active TASK.md inside `current/` to update progress, tick acceptance-criteria boxes, append notes.
 - Use the **built-in todo tool** to decompose the current run into sub-steps. These todos are ephemeral — they live in the agent's session, not on disk.
 
-**Un-bootstrapped template clone:** before doing anything, run `grep -rIlq CopilotBlazorTemplate . --exclude-dir={.git,bin,obj,node_modules}`. If it finds matches and the user's request describes building a new app/feature/domain, defer to `.github/skills/bootstrap-new-app/SKILL.md` first — its rename phase must run before any task-tracked work, or template names get baked into the new app.
+**Un-bootstrapped template clone:** before doing anything, run `grep -rIlq ITSupportDesk . --exclude-dir={.git,bin,obj,node_modules}`. If it finds matches and the user's request describes building a new app/feature/domain, defer to `.github/skills/bootstrap-new-app/SKILL.md` first — its rename phase must run before any task-tracked work, or template names get baked into the new app.
 
 **No existing task and the user asks for something non-trivial?** Do not silently scaffold one. Work directly against the user's request, using the internal todo tool to track sub-steps. If the user explicitly asks for a persisted TASK.md, follow the contract in *Authoring a new TASK.md* below — but only on request, not by default.
 
@@ -212,7 +212,7 @@ These rules apply at the **end** of every task, just before moving the folder to
 - **`git push` during the task.** Blocked in the Copilot coding-agent environment; only `gh pr create` publishes. See Finalization protocol.
 - **Running Copilot code review / CodeQL before the PR exists.** Redundant — they run as PR checks. See Finalization protocol.
 - **Moving a task to `done/` without reviewing `README.md` and `AGENTS.md`.** Critical — stale docs poison every future agent session. If the task changes nothing those docs describe, state `README/AGENTS reviewed: no changes required` in the task notes; never skip the review silently.
-- **Scaffolding tasks in an un-bootstrapped template clone.** If `grep -r CopilotBlazorTemplate .` finds matches and the user is asking for a new app, defer to `.github/skills/bootstrap-new-app/SKILL.md` before any task creation — its rename phase must run first.
+- **Scaffolding tasks in an un-bootstrapped template clone.** If `grep -r ITSupportDesk .` finds matches and the user is asking for a new app, defer to `.github/skills/bootstrap-new-app/SKILL.md` before any task creation — its rename phase must run first.
 - **Main agent authoring new persisted tasks for its own sub-steps.** Sub-decomposition stays in the agent's internal todo tool. Persisted `tasks/` folders are upstream artifacts — created by the user, by an audit/planning session, or by the bootstrap-new-app hand-off, never by the main agent in the middle of a run. A workshop attendee should see one task at most, not five auto-generated ones.
 
 ## References

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ITSupportDesk.Core/ITSupportDesk.Core.csproj" />
+    <Project Path="src/ITSupportDesk.Web/ITSupportDesk.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ITSupportDesk.E2ETests/ITSupportDesk.E2ETests.csproj" />
+    <Project Path="tests/ITSupportDesk.UnitTests/ITSupportDesk.UnitTests.csproj" />
+  </Folder>
+</Solution>

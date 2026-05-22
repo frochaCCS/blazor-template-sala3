@@ -20,15 +20,15 @@ Out of scope:
 - `.gitattributes` (new)
 - `Directory.Build.props` (modify — additive `<PropertyGroup>` for analyzer + version props)
 - `Directory.Packages.props` (new)
-- `src/CopilotBlazorTemplate.Core/CopilotBlazorTemplate.Core.csproj` (strip `Version=`)
-- `src/CopilotBlazorTemplate.Web/CopilotBlazorTemplate.Web.csproj` (strip `Version=`)
-- `tests/CopilotBlazorTemplate.UnitTests/CopilotBlazorTemplate.UnitTests.csproj` (strip `Version=`)
-- `tests/CopilotBlazorTemplate.E2ETests/CopilotBlazorTemplate.E2ETests.csproj` (strip `Version=`)
+- `src/ITSupportDesk.Core/ITSupportDesk.Core.csproj` (strip `Version=`)
+- `src/ITSupportDesk.Web/ITSupportDesk.Web.csproj` (strip `Version=`)
+- `tests/ITSupportDesk.UnitTests/ITSupportDesk.UnitTests.csproj` (strip `Version=`)
+- `tests/ITSupportDesk.E2ETests/ITSupportDesk.E2ETests.csproj` (strip `Version=`)
 - `.gitignore` (modify — remove the two `packages.lock.json` lines under `## NuGet`)
-- `src/CopilotBlazorTemplate.Core/packages.lock.json` (newly tracked — already on disk)
-- `src/CopilotBlazorTemplate.Web/packages.lock.json` (newly tracked)
-- `tests/CopilotBlazorTemplate.UnitTests/packages.lock.json` (newly tracked)
-- `tests/CopilotBlazorTemplate.E2ETests/packages.lock.json` (newly tracked)
+- `src/ITSupportDesk.Core/packages.lock.json` (newly tracked — already on disk)
+- `src/ITSupportDesk.Web/packages.lock.json` (newly tracked)
+- `tests/ITSupportDesk.UnitTests/packages.lock.json` (newly tracked)
+- `tests/ITSupportDesk.E2ETests/packages.lock.json` (newly tracked)
 
 ## Independence guarantee
 - `.editorconfig` and `.gitattributes` are new files — no collision.
@@ -40,7 +40,7 @@ Out of scope:
 This task may sit in `backlog/` for weeks. By the time it is picked up the repo may have drifted from the snapshot the audit captured. Handle the three drift modes explicitly:
 
 - **File already changed by another task.** Before editing `Directory.Build.props`, `.gitignore`, or any csproj, read it. If it already contains the property/setting this task adds (e.g. another task already turned on `TreatWarningsAsErrors`), leave it. If it contains an *incompatible* version of the same setting, merge the intents (e.g. another task set `AnalysisLevel=latest`; reconcile rather than overwrite). Never blindly replace.
-- **File moved/renamed.** Csproj files may have been renamed (project rename) or split. Locate them by `git ls-files '*.csproj'` rather than hardcoding `src/CopilotBlazorTemplate.Core/...`. If `Directory.Packages.props` already exists, additively add missing `<PackageVersion>` entries instead of overwriting the file.
+- **File moved/renamed.** Csproj files may have been renamed (project rename) or split. Locate them by `git ls-files '*.csproj'` rather than hardcoding `src/ITSupportDesk.Core/...`. If `Directory.Packages.props` already exists, additively add missing `<PackageVersion>` entries instead of overwriting the file.
 - **Prerequisite work already done.** Quick checks before each sub-step: does `.editorconfig` already exist at the root? Does `Directory.Packages.props` exist? Are the four `packages.lock.json` files already tracked (`git ls-files | grep packages.lock.json | wc -l`)? Skip whatever is already in place, and note the skips in the PR description.
 
 ### If you find related work already started

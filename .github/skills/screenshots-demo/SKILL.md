@@ -24,7 +24,7 @@ Outputs land in `docs/screenshots/<name>.png` and `docs/demo/<outputFile>`.
 
 Procedure:
 
-1. Start the app the same way `scripts/demo.sh` would: kill :5177, delete `src/CopilotBlazorTemplate.Web/Data/app.db`, then `dotnet run --project src/CopilotBlazorTemplate.Web` against `http://localhost:5177` (keep the app running for the whole pre-flight).
+1. Start the app the same way `scripts/demo.sh` would: kill :5177, delete `src/ITSupportDesk.Web/Data/app.db`, then `dotnet run --project src/ITSupportDesk.Web` against `http://localhost:5177` (keep the app running for the whole pre-flight).
 2. For every screenshot entry and every `demo.steps[].path` in the config — **especially pages you added or changed this task** — use the Playwright MCP server to:
    - Navigate to the page (logging in first if `auth` is set; use the credentials from the config).
    - Wait long enough for the Blazor InteractiveServer SignalR connection to settle (~2s; match the entry's `waitMs` if set).
@@ -80,9 +80,9 @@ npm install playwright --prefix /tmp/pw-runner
 "/tmp/pw-runner/node_modules/.bin/playwright" install chromium
 
 # 2. Reset DB and start app
-rm -f src/CopilotBlazorTemplate.Web/Data/app.db
+rm -f src/ITSupportDesk.Web/Data/app.db
 ASPNETCORE_URLS="http://localhost:5177" ASPNETCORE_ENVIRONMENT="Development" \
-  nohup dotnet run --project src/CopilotBlazorTemplate.Web --no-launch-profile \
+  nohup dotnet run --project src/ITSupportDesk.Web --no-launch-profile \
   > /tmp/demo-app.log 2>&1 &
 APP_PID=$!
 for i in $(seq 1 45); do curl -sf http://localhost:5177 >/dev/null 2>&1 && break; sleep 2; done

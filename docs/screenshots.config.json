@@ -3,25 +3,36 @@
   "baseUrl": "http://localhost:5177",
   "viewport": { "width": 1280, "height": 720 },
   "credentials": {
-    "admin": { "email": "admin@template.local", "password": "Admin123!" }
+    "admin": { "email": "admin@template.local", "password": "Admin123!" },
+    "user": { "email": "user@template.local", "password": "User123!" }
   },
   "screenshots": [
-    { "name": "landing",   "path": "/" },
-    { "name": "login",     "path": "/Account/Login" },
-    { "name": "dashboard", "path": "/dashboard", "auth": "admin", "waitMs": 2000 },
-    { "name": "admin",     "path": "/admin",     "auth": "admin", "waitMs": 2000 }
+    { "name": "landing",        "path": "/" },
+    { "name": "login",          "path": "/Account/Login" },
+    { "name": "dashboard",      "path": "/dashboard",      "auth": "admin", "waitMs": 2000 },
+    { "name": "tickets",        "path": "/tickets",         "auth": "admin", "waitMs": 2000 },
+    { "name": "create-ticket",  "path": "/tickets/create",  "auth": "user",  "waitMs": 2000 },
+    { "name": "admin",          "path": "/admin",           "auth": "admin", "waitMs": 2000 }
   ],
   "demo": {
-    "outputFile": "copilot-blazor-template-demo.webm",
-    "title": "Copilot Blazor Template — Demo",
+    "outputFile": "it-support-desk-demo.webm",
+    "title": "IT Support Desk — Demo",
     "closing": "Built with GitHub Copilot",
     "steps": [
-      { "banner": "Landing Page — Public, no auth required", "path": "/", "waitMs": 1500 },
+      { "banner": "IT Support Desk — Your help starts here", "path": "/", "waitMs": 2000 },
       { "banner": "Navigating to Login...", "path": "/Account/Login", "waitMs": 1500 },
-      { "banner": "Logging in as Admin", "action": "login", "auth": "admin", "waitMs": 1000 },
-      { "banner": "Dashboard — Authenticated users only", "waitMs": 2000 },
-      { "banner": "Navigating to Admin Panel...", "path": "/admin", "waitMs": 1000 },
-      { "banner": "Admin Panel — Admin role required", "waitMs": 2000 },
+      { "banner": "Logging in as regular user", "action": "login", "auth": "user", "waitMs": 1500 },
+      { "banner": "Dashboard — Ticket overview and stats", "waitMs": 2500 },
+      { "banner": "Viewing My Tickets...", "path": "/tickets", "waitMs": 2000 },
+      { "banner": "My Tickets — User sees only their own", "waitMs": 2000 },
+      { "banner": "Creating a new support ticket...", "path": "/tickets/create", "waitMs": 2000 },
+      { "banner": "New Ticket form — Category, Priority, Description", "waitMs": 2000 },
+      { "banner": "Logging out...", "action": "logout", "waitMs": 2000 },
+      { "banner": "Logging in as Admin", "action": "login", "auth": "admin", "waitMs": 1500 },
+      { "banner": "Admin Dashboard — All tickets visible", "waitMs": 2500 },
+      { "banner": "All Tickets — Admin view", "path": "/tickets", "waitMs": 2000 },
+      { "banner": "Navigating to Admin Panel...", "path": "/admin", "waitMs": 1500 },
+      { "banner": "Admin Panel — User management + ticket stats", "waitMs": 2500 },
       { "banner": "Logging out...", "action": "logout", "waitMs": 2000 }
     ]
   }
