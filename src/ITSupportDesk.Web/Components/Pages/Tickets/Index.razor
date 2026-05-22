@@ -10,13 +10,13 @@
 
 <PageTitle>My Tickets</PageTitle>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+<div class="page-header">
     <h1>My Tickets</h1>
     <a href="/tickets/create" class="btn-primary">+ New Ticket</a>
 </div>
 
-<div class="card" style="margin-bottom: 1rem;">
-    <div class="form-group" style="margin-bottom: 0;">
+<div class="card mb-lg">
+    <div class="form-group mb-0">
         <label for="statusFilter">Filter by Status</label>
         <select id="statusFilter" class="form-select" @bind="selectedStatus" @bind:after="ApplyFilter">
             <option value="">All</option>
@@ -67,7 +67,7 @@
     }
     else
     {
-        <p style="color: var(--muted-foreground);">No tickets found. Create your first support ticket!</p>
+        <p class="text-muted">No tickets found. Create your first support ticket!</p>
     }
 </div>
 

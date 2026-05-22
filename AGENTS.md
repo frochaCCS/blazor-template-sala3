@@ -37,6 +37,22 @@ Inspect `.github/skills/<name>/SKILL.md` and invoke when the trigger fires:
 | EF Migration | `dotnet ef migrations add <Name> --project src/ITSupportDesk.Core --startup-project src/ITSupportDesk.Web` |
 | EF Update DB | `dotnet ef database update --project src/ITSupportDesk.Core --startup-project src/ITSupportDesk.Web` |
 
+### Commit Message Format
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for all commits:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Common types:** `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `chore`, `ci`
+
+**Important:** PRs are squash-merged to `main`, so the **PR title must be in Conventional Commit format**. Individual commits within a PR can have any format—they will be squashed into a single commit on `main` using the PR title.
+
 ## Seeded Credentials
 
 | Email | Password | Role |

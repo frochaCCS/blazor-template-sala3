@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ITSupportDesk.Web.Components;
 using ITSupportDesk.Web.Components.Account;
+using ITSupportDesk.Web.Services;
 using ITSupportDesk.Core.Data;
 using ITSupportDesk.Core.Entities;
 using ITSupportDesk.Core.Services;
@@ -37,6 +38,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuthorizationContextService, AuthorizationContextService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 
 var app = builder.Build();
