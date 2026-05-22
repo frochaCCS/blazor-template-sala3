@@ -45,7 +45,9 @@ public class TicketServiceTests : IAsyncLifetime
         db.SaveChanges();
 
         var logger = sp.GetRequiredService<ILogger<TicketService>>();
-        var service = new TicketService(db, logger);
+        var authContext = new MockAuthorizationContextService();
+        authContext.SetCurrentUser(user.Id);
+        var service = new TicketService(db, logger, authContext);
         return (sp, db, service, user.Id, admin.Id);
     }
 

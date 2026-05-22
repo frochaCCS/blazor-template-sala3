@@ -144,15 +144,23 @@ public class NegativePermissionTests : IClassFixture<PlaywrightFixture>
         // Verify user is on dashboard
         await Assertions.Expect(page.Locator("h1")).ToContainTextAsync("Dashboard");
 
-        // Find and click logout button
-        var logoutButton = page.GetByRole(AriaRole.Button, new() { Name = new System.Text.RegularExpressions.Regex("Logout|Log out", System.Text.RegularExpressions.RegexOptions.IgnoreCase) });
+        // Find and click logout button (try common text variations)
+        var logoutButton = page.GetByRole(AriaRole.Button, new() { Name = "Logout" });
+        
+        if (!await logoutButton.IsVisibleAsync())
+        {
+            // Try alternative text
+            logoutButton = page.GetByRole(AriaRole.Button, new() { Name = "Log out" });
+        }
         
         if (await logoutButton.IsVisibleAsync())
         {
             await logoutButton.ClickAsync();
             
             // After logout, should be redirected
-            await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(".*(login|home|account).*", System.Text.RegularExpressions.RegexOptions.IgnoreCase));
+            var url = page.Url.ToLower();
+            Assert.True(url.Contains("login") || url.Contains("home") || url.Contains("account"),
+                $"Expected to be redirected after logout, but landed at {url}");
             
             // Verify we're no longer authenticated by trying to access dashboard
             await page.GotoAsync($"{_fixture.BaseUrl}/dashboard");

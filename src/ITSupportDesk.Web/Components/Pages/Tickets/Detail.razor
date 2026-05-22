@@ -5,6 +5,7 @@
 
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
+@using ITSupportDesk.Core.Constants
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<ApplicationUser> UserManager
@@ -33,8 +34,8 @@ else
     <div class="card mb-xl">
         <h2>@ticket.Title</h2>
         <div class="ticket-meta">
-            <span class="badge badge-status-@ticket.Status.ToString().ToLower()">@FormatStatus(ticket.Status)</span>
-            <span class="badge badge-priority-@ticket.Priority.ToString().ToLower()">@ticket.Priority</span>
+            <span class="badge badge-status-@GetCssSafeEnumName(ticket.Status.ToString())">@FormatStatus(ticket.Status)</span>
+            <span class="badge badge-priority-@GetCssSafeEnumName(ticket.Priority.ToString())">@ticket.Priority</span>
             <span class="badge">@ticket.Category</span>
         </div>
         <p class="ticket-description">@ticket.Description</p>
