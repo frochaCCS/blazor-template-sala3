@@ -95,9 +95,11 @@ public sealed class PlaywrightFixture : IAsyncLifetime
             BaseUrl = await StartWebAppAsync();
 
             _playwright = await Playwright.CreateAsync();
+            var headless = Environment.GetEnvironmentVariable("PLAYWRIGHT_HEADLESS") != "0";
             Browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
-                Headless = true,
+                Headless = headless,
+                SlowMo = headless ? 0 : 500,
                 ChromiumSandbox = false,
                 Args = new[]
                 {
